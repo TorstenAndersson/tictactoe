@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
-<title>Test</title>
+<title>Tic Tac Toe</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <body>
 
 <h1 id="winner" style="visibility: hidden; width: 100%; text-align: center; padding-top: 20px;">winner<h1>
 
-<canvas id="myCanvas" width="400px" height="400px" style="border:1px solid #000000;"></canvas>
+<canvas id="myCanvas" width="300%" height="400px" style="border:1px solid #000000;"></canvas>
 
 <script>
 
@@ -39,6 +39,7 @@ var context = canvas.getContext("2d");
 
 canvas.style.marginLeft = window.innerWidth/2 - canvas.width/2 + "px"
 canvas.style.marginTop = window.innerHeight/2 - canvas.height + "px"
+canvas.height = canvas.width;
 
 var x1 = 0;
 var x2 = canvas.width/3;
@@ -630,7 +631,7 @@ turn ++;
 }
 if (ready == true) {
 ready = false;
-var squareToFill = squares[1];
+var squareToFill = squares[0];
 var xToFill = eval(squareToFill.slice(0, 2));
 var yToFill = eval(squareToFill.slice(2, 4));
 context.fillStyle = "blue";
