@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html>
+<title>Test</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<body>
+
+<h1 id="winner" style="visibility: hidden; width: 100%; text-align: center; padding-top: 20px;">winner<h1>
+
+<canvas id="myCanvas" width="400px" height="400px" style="border:1px solid #000000;"></canvas>
+
+<script>
+
+var myTurn = true;
+var turn = 1;
+var squares = ["x1y1", "x1y2", "x1y3", "x2y1", "x2y2", "x2y3", "x3y1", "x3y2", "x3y3"];
+var occupied = [];
+var occupiedMan = [];
+var occupiedBot = [];
+var diagonalSquares1 = ["x1y1", "x2y2", "x3y3"];
+var diagonalOccupied1 = [];
+var diagonalOccupiedMan1 = [];
+var diagonalOccupiedBot1 = [];
+var diagonalSquares2 = ["x3y1", "x2y2", "x1y3"];
+var diagonalOccupied2 = [];
+var diagonalOccupiedMan2 = [];
+var diagonalOccupiedBot2 = [];
+var resultDiagonal;
+var xClick;
+var yClick;
+var click;
+var result = [];
+var resultLose = [];
+var ready;
+var gameOverBool = false;
+
+var canvas = document.getElementById("myCanvas");
+var context = canvas.getContext("2d");
+
+canvas.style.marginLeft = window.innerWidth/2 - canvas.width/2 + "px"
+canvas.style.marginTop = window.innerHeight/2 - canvas.height + "px"
+
+var x1 = 0;
+var x2 = canvas.width/3;
+var x3 = canvas.width/3 * 2;
+var y1 = 0;
+var y2 = canvas.height/3;
+var y3 = canvas.height/3 * 2;
+var size = canvas.width/3;
+
+context.strokeStyle = "black";
+context.rect(x1, y1, size, size);
+context.stroke();
+context.strokeStyle = "black";	
+context.rect(x2, y1, size, size);
+context.stroke();
+context.strokeStyle = "black";
+context.rect(x3, y1, size, size);
+context.stroke();
+
+context.strokeStyle = "black";
+context.rect(x1, y2, size, size);
+context.stroke();
+context.strokeStyle = "black";	
+context.rect(x2, y2, size, size);
+context.stroke();
+context.strokeStyle = "black";
+context.rect(x3, y2, size, size);
+context.stroke();
+
+context.strokeStyle = "black";
+context.rect(x1, y3, size, size);
+context.stroke();
+context.strokeStyle = "black";	
+context.rect(x2, y3, size, size);
+context.stroke();
+context.strokeStyle = "black";
+context.rect(x3, y3, size, size);
+context.stroke();
+
+canvas.addEventListener("click", (evt) => {
+
+if (myTurn == true) {
+
+var clickX = evt.clientX - canvas.offsetLeft;
+var clickY = evt.clientY - canvas.offsetTop;
+
+if (clickX > x1 && clickX < x2) {
+var xFill = x1;
+var xClick = "x1";
+}
+if (clickX > x2 && clickX < x3) {
+var xFill = x2;
+var xClick = "x2";
+}
+if (clickX > x3 && clickX < canvas.width) {
+var xFill = x3;
+var xClick = "x3";
+}
+
+if (clickY > x1 && clickY < y2) {
+var yFill = y1;
+var yClick = "y1";
+}
+if (clickY > x2 && clickY < y3) {
+var yFill = y2;
+var yClick = "y2";
+}
+if (clickY > x3 && clickY < canvas.width) {
+var yFill = y3;
+var yClick = "y3";
+}
+click = xClick + yClick;
+
+result = occupied.filter(square => square == click);
+
+if (result.length == 0) {
+result.length = 0;
+context.fillStyle = "red";
+context.fillRect(xFill, yFill, size, size);
+occupied[turn] = click;
+occupiedMan[turn] = click;
+squares = squares.filter(squareClicked => squareClicked != click);
+myTurn = false;
+turn ++;
+
+resultDiagonal = diagonalSquares1.filter(diagonal => diagonal == click);
+if (resultDiagonal.length != 0) {
+diagonalOccupied1[diagonalOccupied1.length] = click;
+diagonalOccupiedMan1[diagonalOccupiedMan1.length] = click;
+diagonalSquares1 = diagonalSquares1.filter(squareClicked => squareClicked != click);
+}
+resultDiagonal = diagonalSquares2.filter(diagonal => diagonal == click);
+if (resultDiagonal.length != 0) {
+diagonalOccupied2[diagonalOccupied2.length] = click;
+diagonalOccupiedMan2[diagonalOccupiedMan2.length] = click;
+diagonalSquares2 = diagonalSquares2.filter(squareClicked => squareClicked != click);
+}
+
+if ((occupiedMan.filter(rowSquares => rowSquares.slice(2, 4) == "y1")).length == 3) {
+gameOver("You");
+}
+if ((occupiedMan.filter(rowSquares => rowSquares.slice(2, 4) == "y2")).length == 3) {
+gameOver("You");
+}
+if ((occupiedMan.filter(rowSquares => rowSquares.slice(2, 4) == "y3")).length == 3) {
+gameOver("You");
+}
+if ((occupiedMan.filter(rowSquares => rowSquares.slice(0, 2) == "x1")).length == 3) {
+gameOver("You");
+}
+if ((occupiedMan.filter(rowSquares => rowSquares.slice(0, 2) == "x2")).length == 3) {
+gameOver("You");
+}
+if ((occupiedMan.filter(rowSquares => rowSquares.slice(0, 2) == "x3")).length == 3) {
+gameOver("You");
+}
+if (diagonalOccupiedMan1.length == 3 || diagonalOccupiedMan2.length == 3) {
+gameOver("You");
+}
+
+//ai
+
+
+resultWin1 = occupiedBot.filter(occupiedSquares => occupiedSquares.slice(2, 4) == "y1");
+resultWin2 = occupiedBot.filter(occupiedSquares => occupiedSquares.slice(2, 4) == "y2");
+resultWin3 = occupiedBot.filter(occupiedSquares => occupiedSquares.slice(2, 4) == "y3");
+resultWin4 = occupiedBot.filter(occupiedSquares => occupiedSquares.slice(0, 2) == "x1");
+resultWin5 = occupiedBot.filter(occupiedSquares => occupiedSquares.slice(0, 2) == "x2");
+resultWin6 = occupiedBot.filter(occupiedSquares => occupiedSquares.slice(0, 2) == "x3");
+
+ready = true;
+
+if (gameOverBool == false) {
+
+if (squares.length == 0) {
+gameOver("Draw!");
+}
+
+if (resultWin1.length == 2) {
+if (ready == true) {
+var squareToFill = (squares.filter(squares => squares.slice(2, 4) == "y1"))[0];
+if ((squares.filter(occupiedSquares => occupiedSquares == squareToFill)).length == 1) {
+ready = false;
+squareToFill.length = 4;
+var xToFill = eval(squares.filter(squares => squares.slice(2, 4) == "y1")[0].slice(0, 2));
+var yToFill = eval(squares.filter(squares => squares.slice(2, 4) == "y1")[0].slice(2, 4));
+context.fillStyle = "blue";
+context.fillRect(xToFill, yToFill, size, size);
+occupied[turn] = squareToFill;
+occupiedBot[turn] = squareToFill;
+squares = squares.filter(squareClicked => squareClicked != squareToFill);
+turn ++;
+}
+}
+}
+if (resultWin2.length == 2) {
+if (ready == true) {
+var squareToFill = (squares.filter(squares => squares.slice(2, 4) == "y2"))[0];
+if ((squares.filter(occupiedSquares => occupiedSquares == squareToFill)).length == 1) {
+ready = false;
+squareToFill.length = 4;
+var xToFill = eval(squares.filter(squares => squares.slice(2, 4) == "y2")[0].slice(0, 2));
+var yToFill = eval(squares.filter(squares => squares.slice(2, 4) == "y2")[0].slice(2, 4));
+context.fillStyle = "blue";
+context.fillRect(xToFill, yToFill, size, size);
+occupied[turn] = squareToFill;
+occupiedBot[turn] = squareToFill;
+squares = squares.filter(squareClicked => squareClicked != squareToFill);
+turn ++;
+}
+}
+}
+if (resultWin3.length == 2) {
+if (ready == true) {
+var squareToFill = (squares.filter(squares => squares.slice(2, 4) == "y3"))[0];
+if ((squares.filter(occupiedSquares => occupiedSquares == squareToFill)).length == 1) {
+ready = false;
+squareToFill.length = 4;
+var xToFill = eval(squares.filter(squares => squares.slice(2, 4) == "y3")[0].slice(0, 2));
+var yToFill = eval(squares.filter(squares => squares.slice(2, 4) == "y3")[0].slice(2, 4));
+context.fillStyle = "blue";
+context.fillRect(xToFill, yToFill, size, size);
+occupied[turn] = squareToFill;
+occupiedBot[turn] = squareToFill;
+squares = squares.filter(squareClicked => squareClicked != squareToFill);
+turn ++;
+}
+}
+}
+if (resultWin4.length == 2) {
+if (ready == true) {
+var squareToFill = (squares.filter(squares => squares.slice(0, 2) == "x1"))[0];
+if ((squares.filter(occupiedSquares => occupiedSquares == squareToFill)).length == 1) {
+ready = false;
+squareToFill.length = 4;
+var xToFill = eval(squares.filter(squares => squares.slice(0, 2) == "x1")[0].slice(0, 2));
+var yToFill = eval(squares.filter(squares => squares.slice(0, 2) == "x1")[0].slice(2, 4));
+context.fillStyle = "blue";
+context.fillRect(xToFill, yToFill, size, size);
+occupied[turn] = squareToFill;
+occupiedBot[turn] = squareToFill;
+squares = squares.filter(squareClicked => squareClicked != squareToFill);
+turn ++;
+}
+}
+}
+if (resultWin5.length == 2) {
+if (ready == true) {
+var squareToFill = (squares.filter(squares => squares.slice(0, 2) == "x2"))[0];
+if ((squares.filter(occupiedSquares => occupiedSquares == squareToFill)).length == 1) {
+ready = false;
+squareToFill.length = 4;
+var xToFill = eval(squares.filter(squares => squares.slice(0, 2) == "x2")[0].slice(0, 2));
+var yToFill = eval(squares.filter(squares => squares.slice(0, 2) == "x2")[0].slice(2, 4));
+context.fillStyle = "blue";
+context.fillRect(xToFill, yToFill, size, size);
+occupied[turn] = squareToFill;
+occupiedBot[turn] = squareToFill;
+squares = squares.filter(squareClicked => squareClicked != squareToFill);
+turn ++;
+}
+}
+}
+if (resultWin6.length == 2) {
+if (ready == true) {
+var squareToFill = (squares.filter(squares => squares.slice(0, 2) == "x3"))[0];
+if ((squares.filter(occupiedSquares => occupiedSquares == squareToFill)).length == 1) {
+ready = false;
+squareToFill.length = 4;
+var xToFill = eval(squares.filter(squares => squares.slice(0, 2) == "x3")[0].slice(0, 2));
+var yToFill = eval(squares.filter(squares => squares.slice(0, 2) == "x3")[0].slice(2, 4));
+context.fillStyle = "blue";
+context.fillRect(xToFill, yToFill, size, size);
+occupied[turn] = squareToFill;
+occupiedBot[turn] = squareToFill;
+squares = squares.filter(squareClicked => squareClicked != squareToFill);
+turn ++;
+}
+}
+}
+if (diagonalOccupiedBot1.length == 2) {
+if (ready == true) {
+var squareToFill = diagonalSquares1[0];
+if ((squares.filter(occupiedSquares => occupiedSquares == squareToFill)).length == 1) {
+ready = false;
+var xToFill = eval(squareToFill.slice(0, 2));
+var yToFill = eval(squareToFill.slice(2, 4));
+context.fillStyle = "blue";
+context.fillRect(xToFill, yToFill, size, size);
+occupied[turn] = squareToFill;
+occupiedBot[turn] = squareToFill;
+squares = squares.filter(squareClicked => squareClicked != squareToFill);
+turn ++;
+}
+}
+}
+if (diagonalOccupiedBot2.length == 2) {
+if (ready == true) {
+var squareToFill = diagonalSquares2[0];
+if ((squares.filter(occupiedSquares => occupiedSquares == squareToFill)).length == 1) {
+ready = false;
+var xToFill = eval(squareToFill.slice(0, 2));
+var yToFill = eval(squareToFill.slice(2, 4));
+context.fillStyle = "blue";
+context.fillRect(xToFill, yToFill, size, size);
+occupied[turn] = squareToFill;
+occupiedBot[turn] = squareToFill;
+squares = squares.filter(squareClicked => squareClicked != squareToFill);
+turn ++;
+}
+}
+}
+
+
+resultLose1 = occupiedMan.filter(occupiedSquares => occupiedSquares.slice(2, 4) == "y1");
+resultLose2 = occupiedMan.filter(occupiedSquares => occupiedSquares.slice(2, 4) == "y2");
+resultLose3 = occupiedMan.filter(occupiedSquares => occupiedSquares.slice(2, 4) == "y3");
+resultLose4 = occupiedMan.filter(occupiedSquares => occupiedSquares.slice(0, 2) == "x1");
+resultLose5 = occupiedMan.filter(occupiedSquares => occupiedSquares.slice(0, 2) == "x2");
+resultLose6 = occupiedMan.filter(occupiedSquares => occupiedSquares.slice(0, 2) == "x3");
+
+if (resultLose1.length == 2) {
+if (ready == true) {
+var squareToFill = (squares.filter(squares => squares.slice(2, 4) == "y1"))[0];
+if ((squares.filter(occupiedSquares => occupiedSquares == squareToFill)).length == 1) {
+ready = false;
+squareToFill.length = 4;
+var xToFill = eval(squares.filter(squares => squares.slice(2, 4) == "y1")[0].slice(0, 2));
+var yToFill = eval(squares.filter(squares => squares.slice(2, 4) == "y1")[0].slice(2, 4));
+context.fillStyle = "blue";
+context.fillRect(xToFill, yToFill, size, size);
+occupied[turn] = squareToFill;
+occupiedBot[turn] = squareToFill;
+squares = squares.filter(squareClicked => squareClicked != squareToFill);
+turn ++;
+}
+}
+}
+if (resultLose2.length == 2) {
+if (ready == true) {
+var squareToFill = (squares.filter(squares => squares.slice(2, 4) == "y2"))[0];
+if ((squares.filter(occupiedSquares => occupiedSquares == squareToFill)).length == 1) {
+ready = false;
+squareToFill.length = 4;
+var xToFill = eval(squares.filter(squares => squares.slice(2, 4) == "y2")[0].slice(0, 2));
+var yToFill = eval(squares.filter(squares => squares.slice(2, 4) == "y2")[0].slice(2, 4));
+context.fillStyle = "blue";
+context.fillRect(xToFill, yToFill, size, size);
+occupied[turn] = squareToFill;
+occupiedBot[turn] = squareToFill;
+squares = squares.filter(squareClicked => squareClicked != squareToFill);
+turn ++;
+}
+}
+}
+if (resultLose3.length == 2) {
+if (ready == true) {
+var squareToFill = (squares.filter(squares => squares.slice(2, 4) == "y3"))[0];
+if ((squares.filter(occupiedSquares => occupiedSquares == squareToFill)).length == 1) {
+ready = false;
+squareToFill.length = 4;
+var xToFill = eval(squares.filter(squares => squares.slice(2, 4) == "y3")[0].slice(0, 2));
+var yToFill = eval(squares.filter(squares => squares.slice(2, 4) == "y3")[0].slice(2, 4));
+context.fillStyle = "blue";
+context.fillRect(xToFill, yToFill, size, size);
+occupied[turn] = squareToFill;
+occupiedBot[turn] = squareToFill;
+squares = squares.filter(squareClicked => squareClicked != squareToFill);
+turn ++;
+}
+}
+}
+if (resultLose4.length == 2) {
+if (ready == true) {
+var squareToFill = (squares.filter(squares => squares.slice(0, 2) == "x1"))[0];
+if ((squares.filter(occupiedSquares => occupiedSquares == squareToFill)).length == 1) {
+ready = false;
+squareToFill.length = 4;
+var xToFill = eval(squares.filter(squares => squares.slice(0, 2) == "x1")[0].slice(0, 2));
+var yToFill = eval(squares.filter(squares => squares.slice(0, 2) == "x1")[0].slice(2, 4));
+context.fillStyle = "blue";
+context.fillRect(xToFill, yToFill, size, size);
+occupied[turn] = squareToFill;
+occupiedBot[turn] = squareToFill;
+squares = squares.filter(squareClicked => squareClicked != squareToFill);
+turn ++;
+}
+}
+}
+if (resultLose5.length == 2) {
+if (ready == true) {
+var squareToFill = (squares.filter(squares => squares.slice(0, 2) == "x2"))[0];
+if ((squares.filter(occupiedSquares => occupiedSquares == squareToFill)).length == 1) {
+ready = false;
+squareToFill.length = 4;
+var xToFill = eval(squares.filter(squares => squares.slice(0, 2) == "x2")[0].slice(0, 2));
+var yToFill = eval(squares.filter(squares => squares.slice(0, 2) == "x2")[0].slice(2, 4));
+context.fillStyle = "blue";
+context.fillRect(xToFill, yToFill, size, size);
+occupied[turn] = squareToFill;
+occupiedBot[turn] = squareToFill;
+squares = squares.filter(squareClicked => squareClicked != squareToFill);
+turn ++;
+}
+}
+}
+if (resultLose6.length == 2) {
+if (ready == true) {
+var squareToFill = (squares.filter(squares => squares.slice(0, 2) == "x3"))[0];
+if ((squares.filter(occupiedSquares => occupiedSquares == squareToFill)).length == 1) {
+ready = false;
+squareToFill.length = 4;
+var xToFill = eval(squares.filter(squares => squares.slice(0, 2) == "x3")[0].slice(0, 2));
+var yToFill = eval(squares.filter(squares => squares.slice(0, 2) == "x3")[0].slice(2, 4));
+context.fillStyle = "blue";
+context.fillRect(xToFill, yToFill, size, size);
+occupied[turn] = squareToFill;
+occupiedBot[turn] = squareToFill;
+squares = squares.filter(squareClicked => squareClicked != squareToFill);
+turn ++;
+}
+}
+}
+if (diagonalOccupiedMan1.length == 2) {
+if (ready == true) {
+var squareToFill = diagonalSquares1[0];
+if ((squares.filter(occupiedSquares => occupiedSquares == squareToFill)).length == 1) {
+ready = false;
+var xToFill = eval(squareToFill.slice(0, 2));
+var yToFill = eval(squareToFill.slice(2, 4));
+context.fillStyle = "blue";
+context.fillRect(xToFill, yToFill, size, size);
+occupied[turn] = squareToFill;
+occupiedBot[turn] = squareToFill;
+squares = squares.filter(squareClicked => squareClicked != squareToFill);
+turn ++;
+}
+}
+}
+if (diagonalOccupiedMan2.length == 2) {
+if (ready == true) {
+var squareToFill = diagonalSquares2[0];
+if ((squares.filter(occupiedSquares => occupiedSquares == squareToFill)).length == 1) {
+ready = false;
+var xToFill = eval(squareToFill.slice(0, 2));
+var yToFill = eval(squareToFill.slice(2, 4));
+context.fillStyle = "blue";
+context.fillRect(xToFill, yToFill, size, size);
+occupied[turn] = squareToFill;
+occupiedBot[turn] = squareToFill;
+squares = squares.filter(squareClicked => squareClicked != squareToFill);
+turn ++;
+}
+}
+}
+
+
+if (ready == true) {
+
+resultWin1next = occupiedBot.filter(occupiedSquares => occupiedSquares.slice(2, 4) == "y1");
+resultWin2next = occupiedBot.filter(occupiedSquares => occupiedSquares.slice(2, 4) == "y2");
+resultWin3next = occupiedBot.filter(occupiedSquares => occupiedSquares.slice(2, 4) == "y3");
+resultWin4next = occupiedBot.filter(occupiedSquares => occupiedSquares.slice(0, 2) == "x1");
+resultWin5next = occupiedBot.filter(occupiedSquares => occupiedSquares.slice(0, 2) == "x2");
+resultWin6next = occupiedBot.filter(occupiedSquares => occupiedSquares.slice(0, 2) == "x3");
+
+if (resultWin1next.length == 1) {
+if (ready == true) {
+var squareToFill = (squares.filter(squares => squares.slice(2, 4) == "y1"))[0];
+if (squareToFill != undefined) {
+if ((squares.filter(occupiedSquares => occupiedSquares.slice(2, 4) == squareToFill.slice(2, 4))).length == 2) {
+ready = false;
+squareToFill.length = 4;
+var xToFill = eval(squares.filter(squares => squares.slice(2, 4) == "y1")[0].slice(0, 2));
+var yToFill = eval(squares.filter(squares => squares.slice(2, 4) == "y1")[0].slice(2, 4));
+context.fillStyle = "blue";
+context.fillRect(xToFill, yToFill, size, size);
+occupied[turn] = squareToFill;
+occupiedBot[turn] = squareToFill;
+squares = squares.filter(squareClicked => squareClicked != squareToFill);
+turn ++;
+}
+}
+}
+}
+if (resultWin2next.length == 1) {
+if (ready == true) {
+var squareToFill = (squares.filter(squares => squares.slice(2, 4) == "y2"))[0];
+if (squareToFill != undefined) {
+if ((squares.filter(occupiedSquares => occupiedSquares.slice(2, 4) == squareToFill.slice(2, 4))).length == 2) {
+ready = false;
+squareToFill.length = 4;
+var xToFill = eval(squares.filter(squares => squares.slice(2, 4) == "y2")[0].slice(0, 2));
+var yToFill = eval(squares.filter(squares => squares.slice(2, 4) == "y2")[0].slice(2, 4));
+context.fillStyle = "blue";
+context.fillRect(xToFill, yToFill, size, size);
+occupied[turn] = squareToFill;
+occupiedBot[turn] = squareToFill;
+squares = squares.filter(squareClicked => squareClicked != squareToFill);
+turn ++;
+}
+}
+}
+}
+if (resultWin3next.length == 1) {
+if (ready == true) {
+var squareToFill = (squares.filter(squares => squares.slice(2, 4) == "y3"))[0];
+if (squareToFill != undefined) {
+if ((squares.filter(occupiedSquares => occupiedSquares.slice(2, 4) == squareToFill.slice(2, 4))).length == 2) {
+ready = false;
+squareToFill.length = 4;
+var xToFill = eval(squares.filter(squares => squares.slice(2, 4) == "y3")[0].slice(0, 2));
+var yToFill = eval(squares.filter(squares => squares.slice(2, 4) == "y3")[0].slice(2, 4));
+context.fillStyle = "blue";
+context.fillRect(xToFill, yToFill, size, size);
+occupied[turn] = squareToFill;
+occupiedBot[turn] = squareToFill;
+squares = squares.filter(squareClicked => squareClicked != squareToFill);
+turn ++;
+}
+}
+}
+}
+if (resultWin4next.length == 1) {
+if (ready == true) {
+var squareToFill = (squares.filter(squares => squares.slice(0, 2) == "x1"))[0];
+if (squareToFill != undefined) {
+if ((squares.filter(occupiedSquares => occupiedSquares.slice(0, 2) == squareToFill.slice(0, 2))).length == 2) {
+ready = false;
+squareToFill.length = 4;
+var xToFill = eval(squares.filter(squares => squares.slice(0, 2) == "x1")[0].slice(0, 2));
+var yToFill = eval(squares.filter(squares => squares.slice(0, 2) == "x1")[0].slice(2, 4));
+context.fillStyle = "blue";
+context.fillRect(xToFill, yToFill, size, size);
+occupied[turn] = squareToFill;
+occupiedBot[turn] = squareToFill;
+squares = squares.filter(squareClicked => squareClicked != squareToFill);
+turn ++;
+}
+}
+}
+}
+if (resultWin5next.length == 1) {
+if (ready == true) {
+var squareToFill = (squares.filter(squares => squares.slice(0, 2) == "x2"))[0];
+if (squareToFill != undefined) {
+if ((squares.filter(occupiedSquares => occupiedSquares.slice(0, 2) == squareToFill.slice(0, 2))).length == 2) {
+ready = false;
+squareToFill.length = 4;
+var xToFill = eval(squares.filter(squares => squares.slice(0, 2) == "x2")[0].slice(0, 2));
+var yToFill = eval(squares.filter(squares => squares.slice(0, 2) == "x2")[0].slice(2, 4));
+context.fillStyle = "blue";
+context.fillRect(xToFill, yToFill, size, size);
+occupied[turn] = squareToFill;
+occupiedBot[turn] = squareToFill;
+squares = squares.filter(squareClicked => squareClicked != squareToFill);
+turn ++;
+}
+}
+}
+}
+if (resultWin6next.length == 1) {
+if (ready == true) {
+var squareToFill = (squares.filter(squares => squares.slice(0, 2) == "x3"))[0];
+if (squareToFill != undefined) {
+if ((squares.filter(occupiedSquares => occupiedSquares.slice(0, 2) == squareToFill.slice(0, 2))).length == 2) {
+ready = false;
+squareToFill.length = 4;
+var xToFill = eval(squares.filter(squares => squares.slice(0, 2) == "x3")[0].slice(0, 2));
+var yToFill = eval(squares.filter(squares => squares.slice(0, 2) == "x3")[0].slice(2, 4));
+context.fillStyle = "blue";
+context.fillRect(xToFill, yToFill, size, size);
+occupied[turn] = squareToFill;
+occupiedBot[turn] = squareToFill;
+squares = squares.filter(squareClicked => squareClicked != squareToFill);
+turn ++;
+}
+}
+}
+}
+if (diagonalOccupiedBot1.length == 1 && diagonalSquares1.length == 2) {
+if (ready == true) {
+var squareToFill = diagonalSquares1[0];
+if (squareToFill != undefined) {
+if ((squares.filter(occupiedSquares => occupiedSquares == squareToFill)).length == 1) {
+ready = false;
+var xToFill = eval(squareToFill.slice(0, 2));
+var yToFill = eval(squareToFill.slice(2, 4));
+context.fillStyle = "blue";
+context.fillRect(xToFill, yToFill, size, size);
+occupied[turn] = squareToFill;
+occupiedBot[turn] = squareToFill;
+squares = squares.filter(squareClicked => squareClicked != squareToFill);
+turn ++;
+}
+}
+}
+}
+if (diagonalOccupiedBot2.length == 1 && diagonalSquares2.length == 2) {
+if (ready == true) {
+var squareToFill = diagonalSquares2[0];
+if (squareToFill != undefined) {
+if ((squares.filter(occupiedSquares => occupiedSquares == squareToFill)).length == 1) {
+ready = false;
+var xToFill = eval(squareToFill.slice(0, 2));
+var yToFill = eval(squareToFill.slice(2, 4));
+context.fillStyle = "blue";
+context.fillRect(xToFill, yToFill, size, size);
+occupied[turn] = squareToFill;
+occupiedBot[turn] = squareToFill;
+squares = squares.filter(squareClicked => squareClicked != squareToFill);
+turn ++;
+}
+}
+}
+}
+
+if ((occupied.filter(middleOccupied => middleOccupied == "x2y2")).length == 0) {
+ready = false;
+var squareToFill = "x2y2";
+var xToFill = eval(squareToFill.slice(0, 2));
+var yToFill = eval(squareToFill.slice(2, 4));
+context.fillStyle = "blue";
+context.fillRect(xToFill, yToFill, size, size);
+occupied[turn] = squareToFill;
+occupiedBot[turn] = squareToFill;
+squares = squares.filter(squareClicked => squareClicked != squareToFill);
+turn ++;
+}
+if (ready == true) {
+ready = false;
+var squareToFill = squares[1];
+var xToFill = eval(squareToFill.slice(0, 2));
+var yToFill = eval(squareToFill.slice(2, 4));
+context.fillStyle = "blue";
+context.fillRect(xToFill, yToFill, size, size);
+occupied[turn] = squareToFill;
+occupiedBot[turn] = squareToFill;
+squares = squares.filter(squareClicked => squareClicked != squareToFill);
+turn ++;
+}
+}
+
+myTurn = true;
+
+resultDiagonal = diagonalSquares1.filter(diagonal => diagonal == occupiedBot[turn - 1]);
+if (resultDiagonal.length != 0) {
+diagonalOccupied1[diagonalOccupied1.length] = occupiedBot[turn - 1];
+diagonalOccupiedBot1[diagonalOccupiedBot1.length] = occupiedBot[turn - 1];
+diagonalSquares1 = diagonalSquares1.filter(squareClicked => squareClicked != occupiedBot[turn - 1]);
+}
+resultDiagonal = diagonalSquares2.filter(diagonal => diagonal == occupiedBot[turn - 1]);
+if (resultDiagonal.length != 0) {
+diagonalOccupied2[diagonalOccupied2.length] = occupiedBot[turn - 1];
+diagonalOccupiedBot2[diagonalOccupiedBot2.length] = occupiedBot[turn - 1];
+diagonalSquares2 = diagonalSquares2.filter(squareClicked => squareClicked != occupiedBot[turn - 1]);
+}
+
+
+if ((occupiedBot.filter(rowSquares => rowSquares.slice(2, 4) == "y1")).length == 3) {
+gameOver("Computer");
+}
+if ((occupiedBot.filter(rowSquares => rowSquares.slice(2, 4) == "y2")).length == 3) {
+gameOver("Computer");
+}
+if ((occupiedBot.filter(rowSquares => rowSquares.slice(2, 4) == "y3")).length == 3) {
+gameOver("Computer");
+}
+if ((occupiedBot.filter(rowSquares => rowSquares.slice(0, 2) == "x1")).length == 3) {
+gameOver("Computer");
+}
+if ((occupiedBot.filter(rowSquares => rowSquares.slice(0, 2) == "x2")).length == 3) {
+gameOver("Computer");
+}
+if ((occupiedBot.filter(rowSquares => rowSquares.slice(0, 2) == "x3")).length == 3) {
+gameOver("Computer");
+}
+if (diagonalOccupiedBot1.length == 3 || diagonalOccupiedBot2.length == 3) {
+gameOver("Computer");
+}
+}
+
+function gameOver(winner) {
+myTurn = false;
+ready = false;
+gameOverBool = true;
+if (winner != "Draw!") {
+document.getElementById("winner").style.visibility = "visible";
+document.getElementById("winner").innerHTML = winner + " won!"
+} else {
+document.getElementById("winner").style.visibility = "visible";
+document.getElementById("winner").innerHTML = winner;
+}
+}
+
+
+}
+}
+});
+</script>	
+
+</body>
+</html>
