@@ -166,85 +166,6 @@ if (squares.length == 0) {
 gameOver("Draw!");
 }
 
-/*
-
-var combinations = combine(squares, 5);
-
-//console.log(combinations.filter(arrays => arrays.filter(values => values.slice(0, 2) == "x1").length == 3));
-//console.log(combinations);
-
-function combine(a, min) {
-    var fn = function(n, src, got, all) {
-        if (n == 0) {
-            if (got.length > 0) {
-                all[all.length] = got;
-            }
-            return;
-        }
-        for (var j = 0; j < src.length; j++) {
-            fn(n - 1, src.slice(j + 1), got.concat([src[j]]), all);
-        }
-        return;
-    }
-    var all = [];
-    for (var i = min; i < a.length; i++) {
-        fn(i, a, [], all);
-    }
-    all.push(a);
-    return all;
-}
-
-// ---------------------
-// Permutation
-// ---------------------
-function permutate (src, minLen, maxLen){
-
-    minLen = minLen-1 || 0;
-    maxLen = maxLen || src.length+1;
-    var Asource = src.slice(); // copy the original so we don't apply results to the original.
-
-    var Aout = [];
-
-    var minMax = function(arr){
-        var len = arr.length;
-        if(len > minLen && len <= maxLen){
-            Aout.push(arr);
-        }
-    }
-
-    var picker = function (arr, holder, collect) {
-        if (holder.length) {
-           collect.push(holder);
-        }
-        var len = arr.length;
-        for (var i=0; i<len; i++) {
-            var arrcopy = arr.slice();
-            var elem = arrcopy.splice(i, 1);
-            var result = holder.concat(elem);
-            minMax(result);
-            if (len) {
-                picker(arrcopy, result, collect);
-            } else {
-                collect.push(result);
-            }
-        }   
-    }
-
-    picker(Asource, [], []);
-
-    return Aout;
-
-}
-
-var combos = permutate(squares, 0);
-var xWins = 0;
-var xLosses = 0;
-var wins = [];
-var losses = [];
-
-console.log(combos);
-
-*/
 var moveValue = 0;
 var mostCommonMove;
 var p = squares.length - 1;
@@ -328,23 +249,6 @@ return 1000;
 }
 gWins ++;
 }
-/*
-if ((myTheoreticalOccupiedSquares.filter(rowSquares => rowSquares.slice(2, 4) == "y2")).length == 3) {
-return 1000;
-}
-if ((myTheoreticalOccupiedSquares.filter(rowSquares => rowSquares.slice(2, 4) == "y3")).length == 3) {
-return 1000;
-}
-if ((myTheoreticalOccupiedSquares.filter(rowSquares => rowSquares.slice(0, 2) == "x1")).length == 3) {
-return 1000;
-}
-if ((myTheoreticalOccupiedSquares.filter(rowSquares => rowSquares.slice(0, 2) == "x2")).length == 3) {
-return 1000;
-}
-if ((myTheoreticalOccupiedSquares.filter(rowSquares => rowSquares.slice(0, 2) == "x3")).length == 3) {
-return 1000;
-}
-*/
 var myDiagonal1 = myTheoreticalOccupiedSquares.filter(diagonalSquares => diagonalSquares == "x1y1" ||  diagonalSquares == "x2y2" ||  diagonalSquares == "x3y3");
 var myDiagonal2 = myTheoreticalOccupiedSquares.filter(diagonalSquares => diagonalSquares == "x3y1" ||  diagonalSquares == "x2y2" ||  diagonalSquares == "x1y3");
 if (myDiagonal1.length == 3 || myDiagonal2.length == 3) {
@@ -365,48 +269,6 @@ return 800;
 }
 gLosses ++;
 }
-/*
-if ((enemyOccupiedSquares.filter(rowSquares => rowSquares.slice(2, 4) == "y2")).length == 2 && squaresUnoccupied.filter(squaresCheck => squaresCheck.slice(2, 4) == "y2").length == 1) {
-if (theoreticalSquares.filter(squaresCheck => squaresCheck.slice(2, 4) == "y2").length == 1) {
-return 0;
-}
-if (theoreticalSquares.filter(squaresCheck => squaresCheck.slice(2, 4) == "y2").length == 0) {
-return 800;
-}
-}
-if ((enemyOccupiedSquares.filter(rowSquares => rowSquares.slice(2, 4) == "y3")).length == 2 && squaresUnoccupied.filter(squaresCheck => squaresCheck.slice(2, 4) == "y3").length == 1) {
-if (theoreticalSquares.filter(squaresCheck => squaresCheck.slice(2, 4) == "y3").length == 1) {
-return 0;
-}
-if (theoreticalSquares.filter(squaresCheck => squaresCheck.slice(2, 4) == "y3").length == 0) {
-return 800;
-}
-}
-if ((enemyOccupiedSquares.filter(rowSquares => rowSquares.slice(0, 2) == "x1")).length == 2 && squaresUnoccupied.filter(squaresCheck => squaresCheck.slice(0, 2) == "x1").length == 1) {
-if (theoreticalSquares.filter(squaresCheck => squaresCheck.slice(0, 2) == "x1").length == 1) {
-return 0;
-}
-if (theoreticalSquares.filter(squaresCheck => squaresCheck.slice(0, 2) == "x1").length == 0) {
-return 800;
-}
-}
-if ((enemyOccupiedSquares.filter(rowSquares => rowSquares.slice(0, 2) == "x2")).length == 2 && squaresUnoccupied.filter(squaresCheck => squaresCheck.slice(0, 2) == "x2").length == 1) {
-if (theoreticalSquares.filter(squaresCheck => squaresCheck.slice(0, 2) == "x2").length == 1) {
-return 0;
-}
-if (theoreticalSquares.filter(squaresCheck => squaresCheck.slice(0, 2) == "x2").length == 0) {
-return 800;
-}
-}
-if ((enemyOccupiedSquares.filter(rowSquares => rowSquares.slice(0, 2) == "x3")).length == 2 && squaresUnoccupied.filter(squaresCheck => squaresCheck.slice(0, 2) == "x3").length == 1) {
-if (theoreticalSquares.filter(squaresCheck => squaresCheck.slice(0, 2) == "x3").length == 1) {
-return 0;
-}
-if (theoreticalSquares.filter(squaresCheck => squaresCheck.slice(0, 2) == "x3").length == 0) {
-return 800;
-}
-}
-*/
 var enemyDiagonal1 = enemyOccupiedSquares.filter(diagonalSquares => diagonalSquares == "x1y1" ||  diagonalSquares == "x2y2" ||  diagonalSquares == "x3y3");
 var enemyDiagonal2 = enemyOccupiedSquares.filter(diagonalSquares => diagonalSquares == "x3y1" ||  diagonalSquares == "x2y2" ||  diagonalSquares == "x1y3");
 if (enemyDiagonal1.length == 2 && squaresUnoccupied.filter(diagonalSquares => diagonalSquares == "x1y1" ||  diagonalSquares == "x2y2" ||  diagonalSquares == "x3y3").length == 1) {
