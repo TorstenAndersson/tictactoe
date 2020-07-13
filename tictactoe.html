@@ -5,11 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <body>
 
-<h1 id="winner" style="visibility: hidden; width: 100%; text-align: center; padding-top: 20px; padding-bottom: 30px;">winner<h1>
+<select id="version" onclick="version2()" style="width: 100px; margin-top: 30px;">
+<option value="1" selected="selected">1.0</option>
+<option value="2">2.0</option>
+</select>
+
+<h1 id="winner" style="visibility: hidden; width: 100%; text-align: center; padding-top: 20px; padding-bottom: 30px;">winner</h1>
 
 <canvas id="myCanvas" width="300%" height="400px" style="border:1px solid #000000;"></canvas>
 
 <script>
+
+var versionSelect = document.getElementById("version");
+
+function version2() {
+if (versionSelect.value == 2) {
+window.location.href = "tictactoe2.html";
+}
+}
 
 var myTurn = true;
 var turn = 1;
@@ -37,9 +50,11 @@ var gameOverBool = false;
 var canvas = document.getElementById("myCanvas");
 var context = canvas.getContext("2d");
 
-canvas.style.marginLeft = window.innerWidth/2 - canvas.width/2 + "px"
-canvas.style.marginTop = window.innerHeight/2 - canvas.height + "px"
+canvas.style.marginLeft = window.innerWidth/2 - canvas.width/2 + "px";
+canvas.style.marginTop = window.innerHeight/2 - canvas.height + "px";
 canvas.height = canvas.width;
+
+versionSelect.style.marginLeft = parseInt(canvas.style.marginLeft) + canvas.width/3 + "px";
 
 var x1 = 0;
 var x2 = canvas.width/3;
@@ -161,7 +176,6 @@ gameOver("You");
 }
 
 //ai
-
 
 resultWin1 = occupiedBot.filter(occupiedSquares => occupiedSquares.slice(2, 4) == "y1");
 resultWin2 = occupiedBot.filter(occupiedSquares => occupiedSquares.slice(2, 4) == "y2");
@@ -694,8 +708,6 @@ document.getElementById("winner").style.visibility = "visible";
 document.getElementById("winner").innerHTML = winner;
 }
 }
-
-
 }
 }
 });
