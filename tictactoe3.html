@@ -28,45 +28,6 @@ window.location.href = "tictactoe2.html";
 }
 }
 
-function permutate (src, minLen, maxLen){
-
-    minLen = minLen-1 || 0;
-    maxLen = maxLen || src.length+1;
-    var Asource = src.slice(); // copy the original so we don't apply results to the original.
-
-    var Aout = [];
-
-    var minMax = function(arr){
-        var len = arr.length;
-        if(len > minLen && len <= maxLen){
-            Aout.push(arr);
-        }
-    }
-
-    var picker = function (arr, holder, collect) {
-        if (holder.length) {
-           collect.push(holder);
-        }
-        var len = arr.length;
-        for (var i=0; i<len; i++) {
-            var arrcopy = arr.slice();
-            var elem = arrcopy.splice(i, 1);
-            var result = holder.concat(elem);
-            minMax(result);
-            if (len) {
-                picker(arrcopy, result, collect);
-            } else {
-                collect.push(result);
-            }
-        }   
-    }
-
-    picker(Asource, [], []);
-
-    return Aout;
-
-}
-
 var myTurn = true;
 var turn = 1;
 var squares = ["x1y1", "x1y2", "x1y3", "x2y1", "x2y2", "x2y3", "x3y1", "x3y2", "x3y3"];
@@ -81,8 +42,6 @@ var resultLose = [];
 var ready;
 var gameOverBool = false;
 var wins = [];
-var combos;
-var inDepth = 0;
 
 var canvas = document.getElementById("myCanvas");
 var context = canvas.getContext("2d");
@@ -211,15 +170,6 @@ if (squares.length == 0) {
 gameOver("Draw!");
 }
 
-combos = permutate(squares, squares.length);
-console.log(combos);
-
-var t = combos.length - 1;;
-var f = squares.length - 1;
-var å = 0;
-var highestValues = [0, 0, 0, 0, 0, 0, 0, 0,0,0,0,];
-var movesToMake = [];
-
 var bestMove = evaluatePosition(occupiedBot, occupiedMan, squares, squares);
 
 console.log("winner " + bestMove);
@@ -234,7 +184,6 @@ occupiedBot[turn] = bestMove;
 squares = squares.filter(squareClicked => squareClicked != bestMove);
 myTurn = true;
 turn ++;
-inDepth = 0;
 
 if ((occupiedBot.filter(rowSquares => rowSquares.slice(2, 4) == "y1")).length == 3) {
 gameOver("Computer");
@@ -387,12 +336,6 @@ if (value > highestValue) {
 highestValue = value;
 highestValueMove = move;
 }
-/*
-if (value > highestValue) {
-highestValue = value;
-highestValueMove = move;
-}
-*/
 v --;
 }
 
@@ -530,12 +473,6 @@ if (value2 > highestValue) {
 highestValue = value2;
 highestValueMove = move;
 }
-/*
-if (value > highestValue) {
-highestValue = value;
-highestValueMove = move;
-}
-*/
 v --;
 }
 
@@ -690,14 +627,6 @@ value = value - 1;
 
 j --;
 }
-/*
-value2 = evaluatePosition3(myOccupiedSquares, enemyOccupiedSquares, unoccupiedSquares);
-
-if (value2 < highestValue) {
-highestValue = value2;
-highestValueMove = move;
-}
-*/
 
 value2 = evaluatePosition4(enemyOccupiedSquares, myOccupiedSquares, unoccupiedSquares, unoccupiedSquares);
 
@@ -839,12 +768,6 @@ if (value > highestValue) {
 highestValue = value;
 highestValueMove = move;
 }
-/*
-if (value > highestValue) {
-highestValue = value;
-highestValueMove = move;
-}
-*/
 v --;
 }
 
@@ -856,223 +779,6 @@ console.log("END OF DEPTH 4");
 return highestValue;
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function evaluateArray (arrayToEvaluate, myOccupiedSquares, enemyOccupiedSquares, unoccupiedSquares) {
-
-var myTheoreticalOccupiedSquares = myOccupiedSquares;
-
-var enemyTheoreticalOccupiedSquares = enemyOccupiedSquares;
-
-var theoreticalUnoccupiedSquares = unoccupiedSquares;
-
-var valueOfArray = 0;
-
-var r = 0;
-
-while (r < arrayToEvaluate.length) {
-
-myTheoreticalOccupiedSquares[myTheoreticalOccupiedSquares.length] = arrayToEvaluate[r];
-
-enemyTheoreticalOccupiedSquares[enemyTheoreticalOccupiedSquares.length] = arrayToEvaluate[r + 1];
-
-theoreticalUnoccupiedSquares = theoreticalUnoccupiedSquares.filter(unoccupiedSquares => unoccupiedSquares != arrayToEvaluate[r]);
-
-theoreticalUnoccupiedSquares = theoreticalUnoccupiedSquares.filter(unoccupiedSquares => unoccupiedSquares != arrayToEvaluate[r + 1]);
-
-
-waysToCheck = ["x1", "x2", "x3", "y1", "y2", "y3"];
-slicing1 = [0, 0, 0, 2, 2, 2];
-slicing2 = [2, 2, 2, 4, 4, 4];
-
-var gWins = 0;
-
-while (gWins != waysToCheck.length) {
-if ((myTheoreticalOccupiedSquares.filter(rowSquares => rowSquares.slice(slicing1[gWins], slicing2[gWins]) == waysToCheck[gWins])).length == 3) {
-valueOfArray = valueOfArray + 1000;
-return valueOfArray;
-}
-gWins ++;
-}
-var myDiagonal1 = myTheoreticalOccupiedSquares.filter(diagonalSquares => diagonalSquares == "x1y1" ||  diagonalSquares == "x2y2" ||  diagonalSquares == "x3y3");
-var myDiagonal2 = myTheoreticalOccupiedSquares.filter(diagonalSquares => diagonalSquares == "x3y1" ||  diagonalSquares == "x2y2" ||  diagonalSquares == "x1y3");
-if (myDiagonal1.length == 3 || myDiagonal2.length == 3) {
-valueOfArray = valueOfArray + 1000;
-return valueOfArray;
-}
-
-
-var gLosses = 0;
-
-while (gLosses != waysToCheck.length) {
-if ((enemyTheoreticalOccupiedSquares.filter(rowSquares => rowSquares.slice(slicing1[gLosses], slicing2[gLosses]) == waysToCheck[gLosses])).length == 2 && theoreticalUnoccupiedSquares.filter(squaresCheck => squaresCheck.slice(slicing1[gLosses], slicing2[gLosses]) == waysToCheck[gLosses]).length == 1) {
-if (theoreticalUnoccupiedSquares.filter(squaresCheck => squaresCheck.slice(slicing1[gLosses], slicing2[gLosses]) == waysToCheck[gLosses]).length == 1) {
-valueOfArray = valueOfArray - 10;
-return valueOfArray;
-}
-if (theoreticalUnoccupiedSquares.filter(squaresCheck => squaresCheck.slice(slicing1[gLosses], slicing2[gLosses]) == waysToCheck[gLosses]).length == 0) {
-valueOfArray = valueOfArray + 800;
-}
-}
-gLosses ++;
-}
-var enemyDiagonal1 = enemyTheoreticalOccupiedSquares.filter(diagonalSquares => diagonalSquares == "x1y1" ||  diagonalSquares == "x2y2" ||  diagonalSquares == "x3y3");
-var enemyDiagonal2 = enemyTheoreticalOccupiedSquares.filter(diagonalSquares => diagonalSquares == "x3y1" ||  diagonalSquares == "x2y2" ||  diagonalSquares == "x1y3");
-if (enemyDiagonal1.length == 2 && theoreticalUnoccupiedSquares.filter(diagonalSquares => diagonalSquares == "x1y1" ||  diagonalSquares == "x2y2" ||  diagonalSquares == "x3y3").length == 1) {
-if (theoreticalUnoccupiedSquares.filter(diagonalSquares => diagonalSquares == "x1y1" ||  diagonalSquares == "x2y2" ||  diagonalSquares == "x3y3").length == 1) {
-valueOfArray = valueOfArray - 10;
-return valueOfArray;
-}
-if (theoreticalUnoccupiedSquares.filter(diagonalSquares => diagonalSquares == "x1y1" ||  diagonalSquares == "x2y2" ||  diagonalSquares == "x3y3").length == 0) {
-valueOfArray = valueOfArray + 800;
-}
-}
-if (enemyDiagonal2.length == 2 && theoreticalUnoccupiedSquares.filter(diagonalSquares => diagonalSquares == "x3y1" ||  diagonalSquares == "x2y2" ||  diagonalSquares == "x1y3").length == 1) {
-if (theoreticalUnoccupiedSquares.filter(diagonalSquares => diagonalSquares == "x3y1" ||  diagonalSquares == "x2y2" ||  diagonalSquares == "x1y3").length == 1) {
-valueOfArray = valueOfArray - 10;
-return valueOfArray;
-}
-if (theoreticalUnoccupiedSquares.filter(diagonalSquares => diagonalSquares == "x3y1" ||  diagonalSquares == "x2y2" ||  diagonalSquares == "x1y3").length == 0) {
-valueOfArray = valueOfArray + 800;
-}
-}
-
-
-
-r = r + 2;
-
-}
-return valueOfArray;
-
-
-}
-
-
-/*
-function evaluateArray(arrayToEvaluate, myOccupiedSquares, enemyOccupiedSquares, squaresUnoccupied) {
-
-var r = arrayToEvaluate.length - 1;
-var valueOfArray;
-
-let myMoves = arrayToEvaluate.filter((element, index) => {
-  return index % 2 === 0;
-})
-
-let enemyMoves = arrayToEvaluate.filter((element, index) => {
-  return index % 2 === 1;
-})
-
-
-var myTheoreticalOccupiedSquares = [];
-var o = myTheoreticalOccupiedSquares.length - 1;
-
-while (r != -1) {
-
-var moveToEvaluate = myMoves[r];
-
-myOccupiedSquares = myOccupiedSquares.filter(valuesCheck => valuesCheck != undefined);
-enemyOccupiedSquares = enemyOccupiedSquares.filter(valuesCheck => valuesCheck != undefined);
-squaresUnoccupied = squaresUnoccupied.filter(valuesCheck => valuesCheck != undefined);
-
-while (o != myOccupiedSquares.length - 1) {
-myTheoreticalOccupiedSquares[o] = myOccupiedSquares[o];
-o ++;
-}
-
-myTheoreticalOccupiedSquares[myTheoreticalOccupiedSquares.length] = moveToEvaluate;
-var theoreticalSquares = squaresUnoccupied.filter(squaresCheck => squaresCheck != moveToEvaluate);
-
-waysToCheck = ["x1", "x2", "x3", "y1", "y2", "y3"];
-slicing1 = [0, 0, 0, 2, 2, 2];
-slicing2 = [2, 2, 2, 4, 4, 4];
-
-var gWins = 0;
-
-while (gWins != waysToCheck.length) {
-if ((myTheoreticalOccupiedSquares.filter(rowSquares => rowSquares.slice(slicing1[gWins], slicing2[gWins]) == waysToCheck[gWins])).length == 3) {
-valueOfArray = valueOfArray + 1000;
-}
-gWins ++;
-}
-var myDiagonal1 = myTheoreticalOccupiedSquares.filter(diagonalSquares => diagonalSquares == "x1y1" ||  diagonalSquares == "x2y2" ||  diagonalSquares == "x3y3");
-var myDiagonal2 = myTheoreticalOccupiedSquares.filter(diagonalSquares => diagonalSquares == "x3y1" ||  diagonalSquares == "x2y2" ||  diagonalSquares == "x1y3");
-if (myDiagonal1.length == 3 || myDiagonal2.length == 3) {
-valueOfArray = valueOfArray + 1000;
-}
-
-
-var gLosses = 0;
-
-while (gLosses != waysToCheck.length) {
-if ((enemyOccupiedSquares.filter(rowSquares => rowSquares.slice(slicing1[gLosses], slicing2[gLosses]) == waysToCheck[gLosses])).length == 2 && squaresUnoccupied.filter(squaresCheck => squaresCheck.slice(slicing1[gLosses], slicing2[gLosses]) == waysToCheck[gLosses]).length == 1) {
-if (theoreticalSquares.filter(squaresCheck => squaresCheck.slice(slicing1[gLosses], slicing2[gLosses]) == waysToCheck[gLosses]).length == 1) {
-valueOfArray[r] = o;
-}
-if (theoreticalSquares.filter(squaresCheck => squaresCheck.slice(slicing1[gLosses], slicing2[gLosses]) == waysToCheck[gLosses]).length == 0) {
-valueOfArray = valueOfArray + 800;
-}
-}
-gLosses ++;
-}
-var enemyDiagonal1 = enemyOccupiedSquares.filter(diagonalSquares => diagonalSquares == "x1y1" ||  diagonalSquares == "x2y2" ||  diagonalSquares == "x3y3");
-var enemyDiagonal2 = enemyOccupiedSquares.filter(diagonalSquares => diagonalSquares == "x3y1" ||  diagonalSquares == "x2y2" ||  diagonalSquares == "x1y3");
-if (enemyDiagonal1.length == 2 && squaresUnoccupied.filter(diagonalSquares => diagonalSquares == "x1y1" ||  diagonalSquares == "x2y2" ||  diagonalSquares == "x3y3").length == 1) {
-if (theoreticalSquares.filter(diagonalSquares => diagonalSquares == "x1y1" ||  diagonalSquares == "x2y2" ||  diagonalSquares == "x3y3").length == 1) {
-valueOfArray = valueOfArray - 10;
-}
-if (theoreticalSquares.filter(diagonalSquares => diagonalSquares == "x1y1" ||  diagonalSquares == "x2y2" ||  diagonalSquares == "x3y3").length == 0) {
-valueOfArray = valueOfArray + 800;
-}
-}
-if (enemyDiagonal2.length == 2 && squaresUnoccupied.filter(diagonalSquares => diagonalSquares == "x3y1" ||  diagonalSquares == "x2y2" ||  diagonalSquares == "x1y3").length == 1) {
-if (theoreticalSquares.filter(diagonalSquares => diagonalSquares == "x3y1" ||  diagonalSquares == "x2y2" ||  diagonalSquares == "x1y3").length == 1) {
-valueOfArray = valueOfArray - 10;
-}
-if (theoreticalSquares.filter(diagonalSquares => diagonalSquares == "x3y1" ||  diagonalSquares == "x2y2" ||  diagonalSquares == "x1y3").length == 0) {
-valueOfArray= valueOfArray + 800;
-}
-}
-
-if (moveToEvaluate == "x2y2" && (squaresUnoccupied.filter(squaresCheck => squaresCheck == "x2y2")).length == 1) {
-valueOfArray = valueOfArray + 50;
-}
-r --;
-}
-return valueOfArray;
-}
-*/
 }
 
 function gameOver(winner) {
