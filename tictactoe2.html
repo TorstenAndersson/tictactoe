@@ -8,6 +8,7 @@
 <select id="version" onclick="version1()" style="width: 100px; margin-top: 30px;">
 <option value="1">1.0</option>
 <option value="2" selected="selected">2.0</option>
+<option value="3">3.0</option>
 </select>
 
 <h1 id="winner" style="visibility: hidden; width: 100%; text-align: center; padding-top: 20px; padding-bottom: 30px;">winner<h1>
@@ -21,6 +22,9 @@ var versionSelect = document.getElementById("version");
 function version1() {
 if (versionSelect.value == 1) {
 window.location.href = "tictactoe.html";
+}
+if (versionSelect.value == 3) {
+window.location.href = "tictactoe3.html";
 }
 }
 
@@ -93,28 +97,28 @@ if (myTurn == true) {
 var clickX = evt.clientX - canvas.offsetLeft;
 var clickY = evt.clientY - canvas.offsetTop;
 
-if (clickX > x1 && clickX < x2) {
+if (clickX >= x1 && clickX <= x2) {
 var xFill = x1;
 var xClick = "x1";
 }
-if (clickX > x2 && clickX < x3) {
+if (clickX >= x2 && clickX <= x3) {
 var xFill = x2;
 var xClick = "x2";
 }
-if (clickX > x3 && clickX < canvas.width) {
+if (clickX >= x3 && clickX <= canvas.width) {
 var xFill = x3;
 var xClick = "x3";
 }
 
-if (clickY > x1 && clickY < y2) {
+if (clickY >= x1 && clickY <= y2) {
 var yFill = y1;
 var yClick = "y1";
 }
-if (clickY > x2 && clickY < y3) {
+if (clickY >= x2 && clickY <= y3) {
 var yFill = y2;
 var yClick = "y2";
 }
-if (clickY > x3 && clickY < canvas.width) {
+if (clickY >= x3 && clickY <= canvas.width) {
 var yFill = y3;
 var yClick = "y3";
 }
