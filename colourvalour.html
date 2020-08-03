@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<title>Kulör Valör</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<body>
+
+<h1 id="roundNumber">Round: 1</h1>
+<h1 id="winNumber">Amount of wins: 0</h1>
+<h1 id="winningRounds">Wins: none</h1>
+<h1 id="number2s">Second places: 0</h1>
+<h1 id="number3s">Third places: 0</h1>
+
+<script>
+
+var roundNumber = 0;
+var winNumber = 0;
+var winningRounds;
+var number2s = 0;
+var number3s = 0;
+
+var usedCards = [];
+var position = [];
+var cards = [];
+
+var cardUsed;
+var keepTrying1;
+var keepTrying2;
+
+newRound();
+
+function newRound() {
+
+console.log("NEW ROUND");
+
+roundNumber ++;
+document.getElementById("roundNumber").innerHTML = "Round: " + roundNumber;
+
+cards = [
+"h 01", "h 02", "h 03", "h 04", "h 05", "h 06", "h 07", "h 08", "h 09", "h 10", "h 11", "h 12", "h 13", 
+"s 01", "s 02", "s 03", "s 04", "s 05", "s 06", "s 07", "s 08", "s 09", "s 10", "s 11", "s 12", "s 13",
+"r 01", "r 02", "r 03", "r 04", "r 05", "r 06", "r 07", "r 08", "r 09", "r 10", "r 11", "r 12", "r 13",
+"k 01", "k 02", "k 03", "k 04", "k 05", "k 06", "k 07", "k 08", "k 09", "k 10", "k 11", "k 12", "k 13"
+];
+
+usedCards = [];
+position = [];
+
+newCard();
+}
+
+function newCard() {
+
+while (cards.length > 0) {
+
+cardUsed = false;
+keepTrying1 = true
+keepTrying2 = true
+keepTrying3 = true
+keepTrying4 = true
+
+var randomNumber = Math.round(Math.random() * (cards.length - 1));
+
+console.log("DRAW: " + cards[randomNumber]);
+
+position[position.length] = cards[randomNumber];
+cards = cards.filter(value => value != cards[randomNumber]);
+
+while (keepTrying1 == true || keepTrying2 == true || keepTrying3 == true || keepTrying4 == true) {
+if (position.filter(value => position[(position.indexOf(value) - 1).toString()] != undefined && value.slice(0, 1) == position[(position.indexOf(value) - 1).toString()].slice(0, 1)).length > 0) {
+var index = position.indexOf(position.filter(value => position[(position.indexOf(value) - 1).toString()] != undefined && value.slice(0, 1) == position[(position.indexOf(value) - 1).toString()].slice(0, 1)).toString());
+position[position.indexOf(position.filter(value => position[(position.indexOf(value) - 1).toString()] != undefined && value.slice(0, 1) == position[(position.indexOf(value) - 1).toString()].slice(0, 1)).toString()) - 1] = position[position.indexOf(position.filter(value => position[(position.indexOf(value) - 1).toString()] != undefined && value.slice(0, 1) == position[(position.indexOf(value) - 1).toString()].slice(0, 1)).toString())]//position.splice(position[(position.indexOf(position.filter(value => position[(position.indexOf(value) - 1).toString()] != undefined && value.slice(0, 1) == position[(position.indexOf(value) - 1).toString()].slice(0, 1))) - 1).toString()], 1);
+position.splice(index, 1);
+} else {
+keepTrying1 = false;
+}
+if (position.filter(value => position[(position.indexOf(value) - 3).toString()] != undefined && value.slice(0, 1) == position[(position.indexOf(value) - 3).toString()].slice(0, 1)).length > 0) {
+var index = position.indexOf(position.filter(value => position[(position.indexOf(value) - 3).toString()] != undefined && value.slice(0, 1) == position[(position.indexOf(value) - 3).toString()].slice(0, 1)).toString());
+position[position.indexOf(position.filter(value => position[(position.indexOf(value) - 3).toString()] != undefined && value.slice(0, 1) == position[(position.indexOf(value) - 3).toString()].slice(0, 1)).toString()) - 3] = position[position.indexOf(position.filter(value => position[(position.indexOf(value) - 3).toString()] != undefined && value.slice(0, 1) == position[(position.indexOf(value) - 3).toString()].slice(0, 1)).toString())]//position.splice(position[(position.indexOf(position.filter(value => position[(position.indexOf(value) - 3).toString()] != undefined && value.slice(0, 1) == position[(position.indexOf(value) - 3).toString()].slice(0, 1))) - 3).toString()], 1);
+position.splice(index, 1);
+} else {
+keepTrying2 = false;
+}
+if (position.filter(value => position[(position.indexOf(value) - 1).toString()] != undefined && value.slice(2, 4) == position[(position.indexOf(value) - 1).toString()].slice(2, 4)).length > 0) {
+var index = position.indexOf(position.filter(value => position[(position.indexOf(value) - 1).toString()] != undefined && value.slice(2, 4) == position[(position.indexOf(value) - 1).toString()].slice(2, 4)).toString());
+position[position.indexOf(position.filter(value => position[(position.indexOf(value) - 1).toString()] != undefined && value.slice(2, 4) == position[(position.indexOf(value) - 1).toString()].slice(2, 4)).toString()) - 1] = position[position.indexOf(position.filter(value => position[(position.indexOf(value) - 1).toString()] != undefined && value.slice(2, 4) == position[(position.indexOf(value) - 1).toString()].slice(2, 4)).toString())]//position.splice(position[(position.indexOf(position.filter(value => position[(position.indexOf(value) - 1).toString()] != undefined && value.slice(0, 1) == position[(position.indexOf(value) - 1).toString()].slice(0, 1))) - 1).toString()], 1);
+position.splice(index, 1);
+} else {
+keepTrying3 = false;
+}
+if (position.filter(value => position[(position.indexOf(value) - 3).toString()] != undefined && value.slice(2, 4) == position[(position.indexOf(value) - 3).toString()].slice(2, 4)).length > 0) {
+var index = position.indexOf(position.filter(value => position[(position.indexOf(value) - 3).toString()] != undefined && value.slice(2, 4) == position[(position.indexOf(value) - 3).toString()].slice(2, 4)).toString());
+position[position.indexOf(position.filter(value => position[(position.indexOf(value) - 3).toString()] != undefined && value.slice(2, 4) == position[(position.indexOf(value) - 3).toString()].slice(2, 4)).toString()) - 3] = position[position.indexOf(position.filter(value => position[(position.indexOf(value) - 3).toString()] != undefined && value.slice(2, 4) == position[(position.indexOf(value) - 3).toString()].slice(2, 4)).toString())]//position.splice(position[(position.indexOf(position.filter(value => position[(position.indexOf(value) - 3).toString()] != undefined && value.slice(0, 1) == position[(position.indexOf(value) - 3).toString()].slice(0, 1))) - 3).toString()], 1);
+position.splice(index, 1);
+} else {
+keepTrying4 = false;
+}
+}
+
+if (cards.length == 0) {
+if (position.length == 1) {
+winNumber ++;
+document.getElementById("winNumber").innerHTML = "Amount of wins: " + winNumber;
+if (winNumber > 1) {
+winningRounds = winningRounds + ", (" + roundNumber + ")";
+document.getElementById("winningRounds").innerHTML = "Wins: " + winningRounds;
+} else {
+winningRounds = " (" + roundNumber + ")";
+document.getElementById("winningRounds").innerHTML = "Wins: " + winningRounds;
+}
+}
+}
+console.log("POSITION: " + position);
+}
+if (position.length == 2) {
+number2s ++;
+document.getElementById("number2s").innerHTML = "Second places: " + number2s;
+}
+if (position.length == 3) {
+number3s ++;
+document.getElementById("number3s").innerHTML = "Third places: " + number3s;
+}
+setTimeout(function(){
+newRound();
+}, 1);
+}
+
+</script>	
+
+</body>
+</html>
