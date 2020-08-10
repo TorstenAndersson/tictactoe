@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html>
-<title>Kulör Valör</title>
+<title>Kulör Valör 1</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <body>
 
 <h1 id="roundNumber">Round: 1</h1>
 <h1 id="winNumber">Amount of wins: 0</h1>
-<h1 id="winningRounds">Wins: none</h1>
-<h1 id="number2s">Second places: 0</h1>
-<h1 id="number3s">Third places: 0</h1>
+<h1 id="winningRounds" onclick="hideWins()">Wins: none</h1>
+<h1 id="winningRoundsHidden" onclick="showWins()" style="display: none;"></h1>
+<h1 id="number2s">Two piles: 0</h1>
+<h1 id="number3s">Three piles: 0</h1>
 
 <script>
 
@@ -29,9 +30,21 @@ var keepTrying2;
 
 newRound();
 
+function hideWins() {
+document.getElementById("winningRounds").style.display = "none";
+document.getElementById("winningRoundsHidden").innerHTML = "Winrate: " + Math.round(winNumber/roundNumber * 100000)/1000 + "%";
+document.getElementById("winningRoundsHidden").style.display = "block";
+}
+
+function showWins() {
+document.getElementById("winningRounds").style.display = "block";
+document.getElementById("winningRoundsHidden").style.display = "none";
+}
+
 function newRound() {
 
-console.log("NEW ROUND");
+//console.log("NEW ROUND");
+document.getElementById("winningRoundsHidden").innerHTML = "Winrate: " + Math.round(winNumber/roundNumber * 100000)/1000 + "%";
 
 roundNumber ++;
 document.getElementById("roundNumber").innerHTML = "Round: " + roundNumber;
@@ -61,7 +74,7 @@ keepTrying4 = true
 
 var randomNumber = Math.round(Math.random() * (cards.length - 1));
 
-console.log("DRAW: " + cards[randomNumber]);
+//console.log("DRAW: " + cards[randomNumber]);
 
 position[position.length] = cards[randomNumber];
 cards = cards.filter(value => value != cards[randomNumber]);
@@ -110,15 +123,15 @@ document.getElementById("winningRounds").innerHTML = "Wins: " + winningRounds;
 }
 }
 }
-console.log("POSITION: " + position);
+//console.log("POSITION: " + position);
 }
 if (position.length == 2) {
 number2s ++;
-document.getElementById("number2s").innerHTML = "Second places: " + number2s;
+document.getElementById("number2s").innerHTML = "Two piles: " + number2s;
 }
 if (position.length == 3) {
 number3s ++;
-document.getElementById("number3s").innerHTML = "Third places: " + number3s;
+document.getElementById("number3s").innerHTML = "Three piles: " + number3s;
 }
 setTimeout(function(){
 newRound();
