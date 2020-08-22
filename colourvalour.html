@@ -32,7 +32,7 @@ newRound();
 
 function hideWins() {
 document.getElementById("winningRounds").style.display = "none";
-document.getElementById("winningRoundsHidden").innerHTML = "Winrate: " + Math.round(winNumber/roundNumber * 100000)/1000 + "%";
+document.getElementById("winningRoundsHidden").innerHTML = "Winrate: " + Math.round(winNumber/roundNumber * 100000000)/1000000 + "%";
 document.getElementById("winningRoundsHidden").style.display = "block";
 }
 
@@ -44,7 +44,7 @@ document.getElementById("winningRoundsHidden").style.display = "none";
 function newRound() {
 
 //console.log("NEW ROUND");
-document.getElementById("winningRoundsHidden").innerHTML = "Winrate: " + Math.round(winNumber/roundNumber * 100000)/1000 + "%";
+document.getElementById("winningRoundsHidden").innerHTML = "Winrate: " + Math.round(winNumber/roundNumber * 100000000)/1000000 + "%";
 
 roundNumber ++;
 document.getElementById("roundNumber").innerHTML = "Round: " + roundNumber;
